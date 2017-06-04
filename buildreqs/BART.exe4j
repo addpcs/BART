@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exe4j version="4.2" transformSequenceNumber="1">
+  <directoryPresets config="../dist" />
+  <application name="BART" distributionSourceDir="../dist">
+    <languages>
+      <principalLanguage id="en" customLocalizationFile="" />
+    </languages>
+  </application>
+  <executable name="BART" type="2" iconSet="true" iconFile="BART.ico" executableDir="." redirectStderr="false" stderrFile="err.log" redirectStdout="false" stdoutFile="out.log" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="requireAdministrator" checkConsoleParameter="true" amd64="false">
+    <messageSet />
+    <versionInfo include="true" fileVersion="" fileDescription="A universal data backup tool." legalCopyright="2010 Justin Murray" internalName="BART" companyName="ADDPCs" productVersion="1.0.0.0" />
+  </executable>
+  <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false"/>
+  <java mainClass="com.addpcs.BART.dataBackup" vmParameters="-Xms64m" arguments="" allowVMPassthroughParameters="true" preferredVM="" minVersion="1.6" maxVersion="" allowBetaVM="true" jdkOnly="false">
+    <searchSequence>
+      <directory location="./jre" />
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <classPath>
+      <archive location="./BART.jar" failOnError="true" />
+    </classPath>
+    <nativeLibraryDirectories />
+  </java>
+  <includedFiles />
+  <unextractableFiles />
+</exe4j>
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="BART" default="default" basedir=".">
+    <description>Builds, tests, and runs the project BART.</description>
+    <import file="nbproject/build-impl.xml"/>
+    
+	<target depends="jar" description="Build and test whole project." name="default"/>
+
+    <taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="C:\Program Files\exe4j\bin\ant.jar"/>
+    <property name="UPX" value="C:\Program Files\upx\upx.exe"/>
+
+    <target name="post-jar-defs">
+        <property name="dist.exe" value="${dist.dir}\${application.title}.exe"/>
+        <property name="dist.tar" value="${dist.dir}\${application.title}.tar"/>
+        <property name="dist.tar.bz2" value="${dist.tar}.bz2"/>
+        <property name="src.tar" value="${dist.dir}\${application.title}.src.tar"/>
+        <property name="src.tar.bz2" value="${src.tar}.bz2"/>
+        <property name="release.dir" value="..\..\${application.title}"/>
+        <property name="archive.dir" value="..\archive"/>
+        <property name="buildreqs.dir" value="buildreqs"/>
+    </target>
+
+    <target name="-post-jar"  depends="post-jar-defs,build-exe,get-vers">
+
+        <tar destfile="${dist.tar}" basedir="${dist.dir}" includes="${application.title}.exe, ${application.title}.jar"/>
+        <bzip2 src="${dist.tar}" destfile="${dist.tar.bz2}"/>
+        <!--<delete file="${dist.tar}"/>-->
+
+        <tar destfile="${src.tar}" basedir="${src.dir}"/>
+        <bzip2 src="${src.tar}" destfile="${src.tar.bz2}"/>
+        <!--<delete file="${src.tar}"/>-->
+
+        <copy file="${dist.jar}" todir="${release.dir}"/>
+        <copy file="${dist.exe}" todir="${release.dir}"/>
+        <copy file="${dist.tar.bz2}" tofile="${archive.dir}\${application.title}_${vers}.tar.bz2"/>
+        <copy file="${src.tar.bz2}" tofile="${archive.dir}\${application.title}_src_${vers}.tar.bz2"/>
+    </target>
+
+    <target name="build-exe" depends="post-jar-defs,check-exe,get-vers" unless="exe.uptodate">
+        <exe4j projectfile="${buildreqs.dir}\${application.title}.exe4j" quiet="true" release="${vers}" destination="${dist.dir}"/>
+
+        <exec dir="${dist.dir}" executable="${UPX}">
+            <arg value="-9"/>
+            <arg value="-v"/>
+            <arg value="${application.title}.exe"/>
+        </exec>
+    </target>
+
+    <target name="check-exe" depends="post-jar-defs">
+        <uptodate property="exe.uptodate" srcfile="${dist.jar}" targetfile="${dist.exe}"/>
+    </target>
+
+    <target name="get-vers" depends="post-jar-defs">
+        <exec dir="${dist.dir}" executable="java" outputproperty="vers">
+            <arg value="-jar"/>
+            <arg file="${dist.jar}"/>
+            <arg value="--version"/>
+        </exec>
+        <echo>Version: [${vers}]</echo>
+    </target>
+
+    <target name="recompress-jar" depends="post-jar-defs">
+        <property name="temp.dir" value="${dist.dir}\temp"/>
+        <property name="7za" value="c:\Program Files\7-Zip\7z.exe"/>
+        <delete dir="${temp.dir}"/>
+        <mkdir dir="${temp.dir}"/>
+        <unzip src="${dist.jar}" dest="${temp.dir}"/>
+        <exec executable="${7za}">
+            <arg value="a"/>
+            <arg value="-tzip"/>
+            <arg value="-mx=9"/>
+            <arg value="blah.jar"/>
+            <arg value="${temp.dir}\*"/>
+        </exec>
+        <delete dir="${temp.dir}"/>
+    </target>
+</project>
